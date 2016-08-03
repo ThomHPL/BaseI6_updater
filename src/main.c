@@ -24,7 +24,8 @@
 #include <sys/stat.h>
 
 #include "app.h"
-
+uint8_t openPort(void);
+uint8_t closePort(void);
 uint8_t printHelp(void);
 uint8_t detect(void);
 uint8_t verify(void);
@@ -33,6 +34,9 @@ uint8_t erase(void);
 uint8_t reset(void);
 
 uint8_t readPage(uint8_t page[], uint16_t nbytes,FILE* file,uint16_t offset);
+
+uint8_t comPortNb = 1;
+uint32_t baudrate = 115200;
 
 char filePath[512];
 BOOL WITH_BTLDR=FALSE;
@@ -52,20 +56,20 @@ BOOL WITH_BTLDR=FALSE;
 
 int main(int argc, char *argv[]) {
 	
-	uint8_t comPortNb = 1;
-	uint32_t baudrate = 115200;
-	
 	uint8_t (*function)(void);
 	function = printHelp;
+	BOOL usePort = FALSE;
 	
 	// parsing command line arguments
 	for(int i = 1;i<argc;i++) {
 		if(strcmp(argv[i],"-n")==0) {
 			comPortNb = (uint8_t)atoi(argv[i+1]);
+			usePort = TRUE;
 			i++;
 		}
 		else if(strcmp(argv[i],"-b")==0) {
 			baudrate = (uint32_t)atoi(argv[i+1]);
+			usePort = TRUE;
 			i++;
 		}
 		else if(strcmp(argv[i],"-p")==0) {
@@ -73,9 +77,8 @@ int main(int argc, char *argv[]) {
 			//printf("%s\r\n",filePath);
 			i++;
 		}
-		else if(strcmp(argv[i],"-h")==0) {
+		else if(strcmp(argv[i],"-h")==0 || strcmp(argv[i],"-help")==0 || strcmp(argv[i],"--h")==0) {
 			function = printHelp;
-			return 0;
 		}
 		else if(strcmp(argv[i],"-a")==0) {
 			if(strcmp(argv[i+1],"-d")==0) {
@@ -101,29 +104,45 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-	printf("*Opening COM%d at %d bps:\r\n",comPortNb,baudrate);
-	if(appInit(comPortNb,baudrate)!=0) {
-		printf("*\t\t\tERROR\r\n");
-		return 0;
-	}
-	printf("*\t\t\tSUCCESS\r\n");
+	if(usePort)
+		openPort();
 	
 	// execute function
 	(*function)();
 	
-	printf("*Closing COM%d at %d bps:\r\n",comPortNb,baudrate);
-	if(appDeinit()!=0) {
-		printf("*\t\t\tERROR\r\n");
-		return 0;
-	}
-	printf("*\t\t\tSUCCESS\r\n");
+	if(usePort)
+		closePort();
+	char c;
+	printf("Press ENTER to quit...\r\n");
+	scanf("%c",&c);
 	
 	return 0;
 }
 
+uint8_t openPort(void) {
+	printf("*Opening COM%d at %d bps:\r\n",comPortNb,baudrate);
+	if(appInit(comPortNb,baudrate)!=0) {
+		printf("*\t\t\tERROR\r\n");
+		return -1;
+	}
+	printf("*\t\t\tSUCCESS\r\n");
+	return 0;
+}
+
+uint8_t closePort(void) {
+	printf("*Closing COM%d at %d bps:\r\n",comPortNb,baudrate);
+	if(appDeinit()!=0) {
+		printf("*\t\t\tERROR\r\n");
+		return -1;
+	}
+	printf("*\t\t\tSUCCESS\r\n");
+	return 0;
+	
+}
+
 uint8_t printHelp(void){
 	printf("\r\n");
-	printf("_________UPDATER BASEI6 HELP_________\r\n");
+	printf("_________BASEI6 UPDATER HELP_________\r\n");
 	printf("-n __ : com port number\r\n"); 				//ok
 	printf("-b __ : com port baudrate\r\n");				//ok
 	printf("-p __ : path to flash image\r\n");			//ko
