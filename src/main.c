@@ -1,8 +1,8 @@
-// Copyright Thomas Herpoel 2015
+// Copyright Thomas Herpoel 2016
 //
-// This file is part of FSi6_updater
+// This file is part of BaseI6_updater
 //
-// FSi6_updater is free software: you can redistribute it and/or modify
+// BaseI6_updater is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
@@ -28,7 +28,7 @@ uint8_t openPort(void);
 uint8_t closePort(void);
 uint8_t printHelp(void);
 uint8_t detect(void);
-uint8_t verify(void);
+uint8_t check(void);
 uint8_t upload(void);
 uint8_t erase(void);
 uint8_t reset(void);
@@ -40,19 +40,7 @@ uint32_t baudrate = 115200;
 
 char filePath[512];
 BOOL WITH_BTLDR=FALSE;
-
-/*
- * -n __ : com port number
- * -b __ : baudrate
- * -p __ : path to flash image
- * -h    : print help and exit
- * -a __ : action
- * 	  -d : detect
- * 	  -v : verify flash image CRC_CCITT
- *	  -u : flash
- *    -e : erase program memory
- *	  -r : reset 
-*/
+BOOL useCrcPatch = FALSE;
 
 int main(int argc, char *argv[]) {
 	
@@ -72,6 +60,9 @@ int main(int argc, char *argv[]) {
 			usePort = TRUE;
 			i++;
 		}
+		else if(strcmp(argv[i],"-c")==0) {
+			useCrcPatch = TRUE;
+		}
 		else if(strcmp(argv[i],"-p")==0) {
 			strcpy(filePath,argv[i+1]);
 			//printf("%s\r\n",filePath);
@@ -83,9 +74,6 @@ int main(int argc, char *argv[]) {
 		else if(strcmp(argv[i],"-a")==0) {
 			if(strcmp(argv[i+1],"-d")==0) {
 				function = detect;
-			}
-			else if(strcmp(argv[i+1],"-v")==0) {
-				function = verify;
 			}
 			else if(strcmp(argv[i+1],"-u")==0) {
 				function = upload;
@@ -112,9 +100,9 @@ int main(int argc, char *argv[]) {
 	
 	if(usePort)
 		closePort();
-	char c;
+	
 	printf("Press ENTER to quit...\r\n");
-	scanf("%c",&c);
+	getchar();
 	
 	return 0;
 }
@@ -143,15 +131,15 @@ uint8_t closePort(void) {
 uint8_t printHelp(void){
 	printf("\r\n");
 	printf("_________BASEI6 UPDATER HELP_________\r\n");
-	printf("-n __ : com port number\r\n"); 				//ok
-	printf("-b __ : com port baudrate\r\n");				//ok
-	printf("-p __ : path to flash image\r\n");			//ko
-	printf("-h    : print help and quit\r\n");			//ok
-	printf("-a __ : action to perform :\r\n");			//ok
-	printf("   -d : detect transmitter\r\n");				//ok
-	printf("   -v : verify flash image CRC CCITT\r\n");	//ko
-	printf("   -u : upload flash image\r\n");				//ko
-	printf("   -r : reset transmitter\r\n");				//ok
+	printf("-n __ : com port number\r\n");
+	printf("-b __ : com port baudrate\r\n");
+	printf("-p __ : path to flash image\r\n");
+	printf("-c    : check flash image CRC CCITT\r\n");
+	printf("-h    : print help and quit\r\n");
+	printf("-a __ : action to perform :\r\n");
+	printf("   -d : detect transmitter\r\n");
+	printf("   -u : upload flash image\r\n");
+	printf("   -r : reset transmitter\r\n");
 	printf("_____________________________________\r\n\r\n");
 	return 0;
 }
@@ -166,8 +154,11 @@ uint8_t detect(void) {
 	return 0;
 }
 
-uint8_t verify(void) {
-	printf("*Verifying flash image CRC:\r\n");
+uint8_t check(void) {
+	printf("*Checking flash image CRC:\r\n");
+	char cmd[256];
+	sprintf(cmd,"tools\\BaseI6_CRC_patcher %s",filePath);
+	system(cmd);
 	printf("*\t\t\tNOT IMPLEMENTED YET\r\n");
 	return 0;
 }
@@ -176,8 +167,8 @@ uint8_t upload(void) {
 	if(detect()!=0) {
 		return -1;
 	}
-	if(verify()!=0) {
-		return -2;
+	if(useCrcPatch) {
+		check();
 	}
 	printf("*Uploading:\t\t%s\r\n",filePath);
 	printf("*\tOpening file\t");
