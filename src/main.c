@@ -59,6 +59,8 @@ int main(int argc, char *argv[]) {
 			baudrate = (uint32_t)atoi(argv[i+1]);
 			usePort = TRUE;
 			i++;
+		}else if(strcmp(argv[i],"-bt")==0) {
+			WITH_BTLDR = TRUE;
 		}
 		else if(strcmp(argv[i],"-c")==0) {
 			useCrcPatch = TRUE;
@@ -136,6 +138,7 @@ uint8_t printHelp(void){
 	printf("-p __ : path to flash image\r\n");
 	printf("-c    : check flash image CRC CCITT\r\n");
 	printf("-h    : print help and quit\r\n");
+	printf("-bt   : bootloader is in image file\r\n");
 	printf("-a __ : action to perform :\r\n");
 	printf("   -d : detect transmitter\r\n");
 	printf("   -u : upload flash image\r\n");
@@ -157,7 +160,8 @@ uint8_t detect(void) {
 uint8_t check(void) {
 	printf("*Checking flash image CRC:\r\n");
 	char cmd[256];
-	sprintf(cmd,"tools\\BaseI6_CRC_patcher %s",filePath);
+	if(WITH_BTLDR) sprintf(cmd,"tools\\BaseI6_CRC_patcher %s -b",filePath);
+	else sprintf(cmd,"tools\\BaseI6_CRC_patcher %s",filePath);
 	system(cmd);
 	printf("*\t\t\tSUCCESS\r\n");
 	return 0;
@@ -187,7 +191,11 @@ uint8_t upload(void) {
 	
 	
 	uint16_t start = 0x1800;
-	uint16_t finish = 0x1800+fileSize;
+	uint16_t finish;
+	if(WITH_BTLDR)
+		finish = fileSize;
+	else
+		finish = 0x1800+fileSize;
 	printf("*\t");
 	for(int offset=start;offset<finish;offset+=0x80) {
 		if(offset%0x400 == 0) {
@@ -197,6 +205,8 @@ uint8_t upload(void) {
 	printf("\r\n*\t");
 	
 	uint16_t bytesRemaining = fileSize;
+	if(WITH_BTLDR)
+		bytesRemaining -= 0x1800;
 	uint8_t data[512];
 	uint16_t lastOffset=0x1800;
 	for(int offset=start;offset<finish-0x80;offset+=0x80) {
@@ -218,12 +228,14 @@ uint8_t upload(void) {
 	}
 	printf("\r\n");
 	//printf("writing 0x%X bytes at 0x%X\r\n",bytesRemaining,lastOffset);
-	if(WITH_BTLDR)
-		readPage(data,bytesRemaining,file,lastOffset);
-	else
-		readPage(data,bytesRemaining,file,lastOffset-0x1800);
+	if(bytesRemaining>0) {
+		if(WITH_BTLDR)
+			readPage(data,bytesRemaining,file,lastOffset);
+		else
+			readPage(data,bytesRemaining,file,lastOffset-0x1800);
+		appWritePage(data,bytesRemaining,lastOffset);
+	}
 	
-	appWritePage(data,bytesRemaining,lastOffset);
 
 	printf("*\t\t\tSUCCESS\r\n");
 	fclose(file);
