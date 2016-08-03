@@ -8,3 +8,11 @@ Easy upload:
 * Double click on 'run.bat'.
 * Wait until upload is completed.
 * Profit.
+
+# Change Log
+
+## [1.1] - 3-08-2016
+### Added
+- CRC signature check before uploading the image
+### Changed
+- nothing
