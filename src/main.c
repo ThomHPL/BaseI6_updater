@@ -158,6 +158,7 @@ uint8_t check(void) {
 	printf("*Checking flash image CRC:\r\n");
 	char cmd[256];
 	sprintf(cmd,"tools\\BaseI6_CRC_patcher %s",filePath);
+	system(cmd);
 	printf("*\t\t\tSUCCESS\r\n");
 	return 0;
 }
