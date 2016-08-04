@@ -13,7 +13,7 @@ Easy upload:
 # Help
 
 ## Command line options
-<center>
+
 | Option        | Parameter     | Description  |
 |:-------------:|:-------------:| ------------ |
 | `-c` |  | check flash image CRC before upload  |
@@ -26,7 +26,6 @@ Easy upload:
 | `-a` | `-d` | detect transmitter |
 | `-a` | `-u` | upload flash image |
 | `-a` | `-r` | reset transmitter |
-</center>
 
 # Change Log
 
