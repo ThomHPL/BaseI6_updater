@@ -1,6 +1,6 @@
 # BaseI6_updater
 
-The firmware FlyPlus comes from Dave Borthwick ( http://www.rcgroups.com/forums/member.php?u=626757 ). Thanks to him!
+The FlyPlus 10 channels firmware comes from Dave Borthwick ( http://www.rcgroups.com/forums/member.php?u=626757 ). Thanks to him!
 
 ##Easy upload:
 
