@@ -145,18 +145,19 @@ uint8_t closePort(void) {
 
 uint8_t printHelp(void){
 	printf("\r\n");
-	printf("_________BASEI6 UPDATER HELP_________\r\n");
+	printf("____________BASEI6 UPDATER HELP____________\r\n");
+	printf("-h    : print help and quit\r\n");
+	printf("-bt   : if image file contains bootloader\r\n");
+	printf("-c    : check flash image CRC before upload\r\n");
+	printf("-v    : verbose mode (pause at the end)\r\n");
 	printf("-n __ : com port number\r\n");
 	printf("-b __ : com port baudrate\r\n");
 	printf("-p __ : path to flash image\r\n");
-	printf("-c    : check flash image CRC CCITT\r\n");
-	printf("-h    : print help and quit\r\n");
-	printf("-bt   : bootloader is in image file\r\n");
 	printf("-a __ : action to perform :\r\n");
 	printf("   -d : detect transmitter\r\n");
 	printf("   -u : upload flash image\r\n");
 	printf("   -r : reset transmitter\r\n");
-	printf("_____________________________________\r\n\r\n");
+	printf("___________________________________________\r\n\r\n");
 	return 0;
 }
 
