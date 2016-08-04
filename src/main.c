@@ -176,9 +176,12 @@ uint8_t check(void) {
 	char cmd[256];
 	if(withBtldr) sprintf(cmd,"tools\\BaseI6_CRC_patcher %s -b",filePath);
 	else sprintf(cmd,"tools\\BaseI6_CRC_patcher %s",filePath);
-	system(cmd);
-	printf("*\t\t\tSUCCESS\r\n");
-	return 0;
+	int code = system(cmd);
+	if(code==0)
+		printf("*\t\t\tSUCCESS\r\n");
+	else
+		printf("*\t\t\tERROR\r\n");
+	return code;
 }
 
 uint8_t upload(void) {
