@@ -2,7 +2,7 @@
 
 The FlyPlus 10 channels firmware comes from Dave Borthwick ( http://www.rcgroups.com/forums/member.php?u=626757 ). Thanks to him!
 
-##Easy upload:
+## Easy upload:
 
 * Edit the run.bat file: replace the '3' after the '-n' option with your COM port number
 * Edit the run.bat by placing the path to the firmware you want to upload after the '-p' option
@@ -10,6 +10,10 @@ The FlyPlus 10 channels firmware comes from Dave Borthwick ( http://www.rcgroups
 * Double click on 'run.bat'
 * Wait until upload is completed
 * Profit
+
+## Run.bat
+
+bin\1.1\baseI6_updater -n `your com port number here` -b 115200 -a -u -p `path to firmware image file here` -c -v
 
 
 ## Help
