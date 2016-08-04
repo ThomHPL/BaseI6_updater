@@ -20,10 +20,17 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <conio.h>
 #include <sys/stat.h>
 
 #include "app.h"
+
+#define DEFAULT_COMPORT 1
+#define DEFAULT_BAUDRATE 115200
+
+// prototypes
+
 uint8_t openPort(void);
 uint8_t closePort(void);
 uint8_t printHelp(void);
@@ -32,38 +39,38 @@ uint8_t check(void);
 uint8_t upload(void);
 uint8_t erase(void);
 uint8_t reset(void);
-
 uint8_t readPage(uint8_t page[], uint16_t nbytes,FILE* file,uint16_t offset);
 
-uint8_t comPortNb = 1;
-uint32_t baudrate = 115200;
+// global variables
 
+uint8_t comPortNb = DEFAULT_COMPORT;
+uint32_t baudrate = DEFAULT_BAUDRATE;
 char filePath[512];
-BOOL WITH_BTLDR=FALSE;
-BOOL useCrcPatch = FALSE;
+bool usePort = false;
+bool withBtldr = false;
+bool useCrcPatch = false;
 
 int main(int argc, char *argv[]) {
 	
-	uint8_t (*function)(void);
-	function = printHelp;
-	BOOL usePort = FALSE;
+	uint8_t (*function)(void);	// pointer to the executed command
+	function = printHelp;		// by default: print help and quit 
 	
 	// parsing command line arguments
 	for(int i = 1;i<argc;i++) {
 		if(strcmp(argv[i],"-n")==0) {
 			comPortNb = (uint8_t)atoi(argv[i+1]);
-			usePort = TRUE;
+			usePort = true;
 			i++;
 		}
 		else if(strcmp(argv[i],"-b")==0) {
 			baudrate = (uint32_t)atoi(argv[i+1]);
-			usePort = TRUE;
+			usePort = true;
 			i++;
 		}else if(strcmp(argv[i],"-bt")==0) {
-			WITH_BTLDR = TRUE;
+			withBtldr = true;
 		}
 		else if(strcmp(argv[i],"-c")==0) {
-			useCrcPatch = TRUE;
+			useCrcPatch = true;
 		}
 		else if(strcmp(argv[i],"-p")==0) {
 			strcpy(filePath,argv[i+1]);
@@ -160,7 +167,7 @@ uint8_t detect(void) {
 uint8_t check(void) {
 	printf("*Checking flash image CRC:\r\n");
 	char cmd[256];
-	if(WITH_BTLDR) sprintf(cmd,"tools\\BaseI6_CRC_patcher %s -b",filePath);
+	if(withBtldr) sprintf(cmd,"tools\\BaseI6_CRC_patcher %s -b",filePath);
 	else sprintf(cmd,"tools\\BaseI6_CRC_patcher %s",filePath);
 	system(cmd);
 	printf("*\t\t\tSUCCESS\r\n");
@@ -192,7 +199,7 @@ uint8_t upload(void) {
 	
 	uint16_t start = 0x1800;
 	uint16_t finish;
-	if(WITH_BTLDR)
+	if(withBtldr)
 		finish = fileSize;
 	else
 		finish = 0x1800+fileSize;
@@ -205,12 +212,12 @@ uint8_t upload(void) {
 	printf("\r\n*\t");
 	
 	uint16_t bytesRemaining = fileSize;
-	if(WITH_BTLDR)
+	if(withBtldr)
 		bytesRemaining -= 0x1800;
 	uint8_t data[512];
 	uint16_t lastOffset=0x1800;
 	for(int offset=start;offset<finish-0x80;offset+=0x80) {
-		if(WITH_BTLDR)
+		if(withBtldr)
 			readPage(data,0x80,file,offset);
 		else
 			readPage(data,0x80,file,offset-0x1800);
@@ -229,7 +236,7 @@ uint8_t upload(void) {
 	printf("\r\n");
 	//printf("writing 0x%X bytes at 0x%X\r\n",bytesRemaining,lastOffset);
 	if(bytesRemaining>0) {
-		if(WITH_BTLDR)
+		if(withBtldr)
 			readPage(data,bytesRemaining,file,lastOffset);
 		else
 			readPage(data,bytesRemaining,file,lastOffset-0x1800);
