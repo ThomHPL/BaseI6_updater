@@ -46,16 +46,17 @@ uint8_t readPage(uint8_t page[], uint16_t nbytes,FILE* file,uint16_t offset);
 uint8_t comPortNb = DEFAULT_COMPORT;
 uint32_t baudrate = DEFAULT_BAUDRATE;
 char filePath[512];
-bool usePort = false;
-bool withBtldr = false;
-bool useCrcPatch = false;
+bool usePort = false;			// set to true if com port or baudrate is defined
+bool withBtldr = false;			// set to true by -bt option
+bool useCrcPatch = false;		// set to true by -c option
+bool verbose = false;			// set to true by -v option
 
 int main(int argc, char *argv[]) {
 	
 	uint8_t (*function)(void);	// pointer to the executed command
 	function = printHelp;		// by default: print help and quit 
 	
-	// parsing command line arguments
+	// parsing command line options
 	for(int i = 1;i<argc;i++) {
 		if(strcmp(argv[i],"-n")==0) {
 			comPortNb = (uint8_t)atoi(argv[i+1]);
@@ -72,9 +73,11 @@ int main(int argc, char *argv[]) {
 		else if(strcmp(argv[i],"-c")==0) {
 			useCrcPatch = true;
 		}
+		else if(strcmp(argv[i],"-v")==0) {
+			verbose = true;
+		}
 		else if(strcmp(argv[i],"-p")==0) {
 			strcpy(filePath,argv[i+1]);
-			//printf("%s\r\n",filePath);
 			i++;
 		}
 		else if(strcmp(argv[i],"-h")==0 || strcmp(argv[i],"-help")==0 || strcmp(argv[i],"--h")==0) {
@@ -104,14 +107,17 @@ int main(int argc, char *argv[]) {
 	if(usePort)
 		openPort();
 	
-	// execute function
+	// execute selected function
 	(*function)();
 	
 	if(usePort)
 		closePort();
 	
-	printf("Press ENTER to quit...\r\n");
-	getchar();
+	// stop execution only in verbose mode
+	if(verbose) {
+		printf("Press ENTER to quit...\r\n");
+		getchar();
+	}
 	
 	return 0;
 }
