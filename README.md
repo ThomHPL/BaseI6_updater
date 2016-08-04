@@ -10,6 +10,24 @@ Easy upload:
 * Wait until upload is completed
 * Profit
 
+# Help
+
+## Command line options
+<center>
+| Option        | Parameter     | Description  |
+|:-------------:|:-------------:| ------------ |
+| `-c` |  | check flash image CRC before upload  |
+| `-bt` |  | if image file contains bootloader |
+| `-h` |  | print help and quit  |
+| `-n` | `number` | com port number |
+| `-b` | `baudrate` | com port baudrate |
+| `-p` | `path` | path to flash image |
+| `-a` | `___` | action to perform : |
+| `-a` | `-d` | detect transmitter |
+| `-a` | `-u` | upload flash image |
+| `-a` | `-r` | reset transmitter |
+</center>
+
 # Change Log
 
 ## [1.1] - 3-08-2016
