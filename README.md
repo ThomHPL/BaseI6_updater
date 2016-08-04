@@ -18,9 +18,10 @@ The FlyPlus 10 channels firmware comes from Dave Borthwick ( http://www.rcgroups
 
 | Option        | Parameter     | Description  |
 |:-------------:|:-------------:| ------------ |
-| `-c` |  | check flash image CRC before upload  |
-| `-bt` |  | if image file contains bootloader |
 | `-h` |  | print help and quit  |
+| `-bt` |  | if image file contains bootloader |
+| `-c` |  | check flash image CRC before upload  |
+| `-v` |  | verbose mode (pause at the end)  |
 | `-n` | `number` | com port number |
 | `-b` | `baudrate` | com port baudrate |
 | `-p` | `path` | path to flash image |
