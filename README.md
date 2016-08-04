@@ -40,6 +40,8 @@ bin\1.1\baseI6_updater -n `your com port number here` -b 115200 -a -u -p `path t
 ### [1.1] - 3-08-2016
 #### Added
 - CRC signature check before uploading the image
+- Ability to upload images with or without bootloader (`-bt` option)
+- Verbose option to pause the execution at the end (`-v` option)
 
 #### Changed
 - nothing
