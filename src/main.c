@@ -104,9 +104,16 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-	if(usePort)
-		openPort();
-	
+	if(usePort) {
+		if(openPort()!=0){
+			if(verbose) {
+				printf("Press ENTER to quit...\r\n");
+				getchar();
+				return -1;
+			}
+		}
+	}
+			
 	// execute selected function
 	(*function)();
 	
