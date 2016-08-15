@@ -149,6 +149,7 @@ uint8_t openPort(void) {
 	}
 	printf("*\t\t\tSUCCESS\r\n");
 	if(detect()!=0) {
+		closePort();
 		return -1;
 	}
 	return 0;
