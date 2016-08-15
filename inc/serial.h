@@ -28,7 +28,7 @@
 
 #define RX_SIZE         4096    /* taille tampon d'entrée  */
 #define TX_SIZE         4096    /* taille tampon de sortie */
-#define MAX_WAIT_READ   1000    /* temps max d'attente pour lecture (en ms) */
+#define MAX_WAIT_READ   100    /* temps max d'attente pour lecture (en ms) */
 
 uint8_t openCom(uint32_t comPortNb,DWORD baudrate,HANDLE *hdlr);
 uint8_t closeCom(HANDLE *hdlr);

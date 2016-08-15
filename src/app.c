@@ -36,8 +36,8 @@ uint8_t appReset() {
 /*	detect the tx	*/
 uint8_t appDetect() {
 	uint8_t code = 0xFF;
-	int i = 0;
-	while(code!=0 && i<10) {
+	//int i = 0;
+	//while(code!=0 && i<10) {
 		printf("*\tDetection ...\t");
 		uint8_t data[] = {}; // detect
 		encData(data,sizeof(data),CMD_DETECT);
@@ -61,8 +61,8 @@ uint8_t appDetect() {
 			}
 		}
 			
-		i++;
-	}
+		//i++;
+	//}
 	return code;
 }
 

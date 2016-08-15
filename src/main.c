@@ -26,11 +26,11 @@
 
 #include "app.h"
 
-#define DEFAULT_COMPORT 1
+#define DEFAULT_COMPORT 0
 #define DEFAULT_BAUDRATE 115200
 
 // prototypes
-
+uint8_t empty(void) ;
 uint8_t openPort(void);
 uint8_t closePort(void);
 uint8_t printHelp(void);
@@ -47,6 +47,7 @@ uint8_t comPortNb = DEFAULT_COMPORT;
 uint32_t baudrate = DEFAULT_BAUDRATE;
 char filePath[512];
 bool usePort = false;			// set to true if com port or baudrate is defined
+bool autoDetect = true;
 bool withBtldr = false;			// set to true by -bt option
 bool useCrcPatch = false;		// set to true by -c option
 bool verbose = false;			// set to true by -v option
@@ -61,6 +62,7 @@ int main(int argc, char *argv[]) {
 		if(strcmp(argv[i],"-n")==0) {
 			comPortNb = (uint8_t)atoi(argv[i+1]);
 			usePort = true;
+			autoDetect = false;
 			i++;
 		}
 		else if(strcmp(argv[i],"-b")==0) {
@@ -85,16 +87,20 @@ int main(int argc, char *argv[]) {
 		}
 		else if(strcmp(argv[i],"-a")==0) {
 			if(strcmp(argv[i+1],"-d")==0) {
-				function = detect;
+				function = empty;
+				usePort = true;
 			}
 			else if(strcmp(argv[i+1],"-u")==0) {
 				function = upload;
+				usePort = true;
 			}
 			else if(strcmp(argv[i+1],"-e")==0) {
 				function = erase;
+				usePort = true;
 			}
 			else if(strcmp(argv[i+1],"-r")==0) {
 				function = reset;
+				usePort = true;
 			}
 			else {
 				printf("Invalid -a option, exit. \r\n");
@@ -105,12 +111,15 @@ int main(int argc, char *argv[]) {
 	}
 	
 	if(usePort) {
-		if(openPort()!=0){
-			if(verbose) {
-				printf("Press ENTER to quit...\r\n");
-				getchar();
+		while(openPort()!=0){
+			if(comPortNb >= 15) {
+				if(verbose) {
+					printf("Press ENTER to quit...\r\n");
+					getchar();
+				}
 				return -1;
 			}
+			comPortNb++;
 		}
 	}
 			
@@ -128,14 +137,20 @@ int main(int argc, char *argv[]) {
 	
 	return 0;
 }
+uint8_t empty(void) {
+	return 0;
+}
 
 uint8_t openPort(void) {
-	printf("*Opening COM%d at %d bps:\r\n",comPortNb,baudrate);
+	printf("*Try opening COM%d at %d bps:\r\n",comPortNb,baudrate);
 	if(appInit(comPortNb,baudrate)!=0) {
 		printf("*\t\t\tERROR\r\n");
 		return -1;
 	}
 	printf("*\t\t\tSUCCESS\r\n");
+	if(detect()!=0) {
+		return -1;
+	}
 	return 0;
 }
 
@@ -192,9 +207,9 @@ uint8_t check(void) {
 }
 
 uint8_t upload(void) {
-	if(detect()!=0) {
-		return -1;
-	}
+	// if(detect()!=0) {
+		// return -1;
+	// }
 	if(useCrcPatch) {
 		check();
 	}

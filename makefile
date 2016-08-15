@@ -4,7 +4,7 @@ SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
 VERSION = 1
-SUB_VERSION = 2beta
+SUB_VERSION = 2
 VER_DIR =$(BIN_DIR)/$(VERSION).$(SUB_VERSION)
 
 directories: $(BIN_DIR) $(OBJ_DIR) $(VER_DIR)
