@@ -11,11 +11,12 @@ The FlyPlus 10 channels firmware comes from Dave Borthwick ( http://www.rcgroups
 * Profit
 
 ## Advanced:
+
 * Edit run.bat to suit your needs (see help)
 
 ## Run.bat
 
-bin\1.1\baseI6_updater -n `your com port number here` -b 115200 -a -u -p `path to firmware image file here` -c -v
+bin\1.2\baseI6_updater -a -u -p `path to firmware image file here` -c -v
 
 
 ## Help
@@ -39,9 +40,10 @@ bin\1.1\baseI6_updater -n `your com port number here` -b 115200 -a -u -p `path t
 
 ## Change Log
 
-### [1.1] - 3-08-2016
+### [1.2] - 15-08-2016
 #### Added
 - Adding auto detection of the right com port
+
 #### Changed
 - Resolved crash caused by not found com port
 
