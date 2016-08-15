@@ -4,12 +4,14 @@ The FlyPlus 10 channels firmware comes from Dave Borthwick ( http://www.rcgroups
 
 ## Easy upload:
 
-* Edit the run.bat file: replace the '3' after the '-n' option with your COM port number
-* Edit the run.bat by placing the path to the firmware you want to upload after the '-p' option
 * Put your transmitter in update mode
 * Double click on 'run.bat'
 * Wait until upload is completed
+* ...
 * Profit
+
+## Advanced:
+* Edit run.bat to suit your needs (see help)
 
 ## Run.bat
 
